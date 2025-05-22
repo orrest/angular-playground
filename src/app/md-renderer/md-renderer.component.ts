@@ -1,11 +1,30 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, effect, inject, input } from '@angular/core';
+import { markdownToHtml } from './utils/transform-markdown';
 
 @Component({
-  selector: 'app-md-renderer',
-  imports: [],
-  templateUrl: './md-renderer.component.html',
-  styleUrl: './md-renderer.component.css'
+  selector: 'md-renderer',
+  template: 'Loading document...',
+  standalone: true,
 })
 export class MdRendererComponent {
+  content = input.required<string>();
 
+  private _elementRef = inject<ElementRef>(ElementRef);
+
+  constructor() {
+    effect(async () => {
+      const md = this.content();
+      await this.setDataFromSrc(md);
+    });
+  }
+
+  async setDataFromSrc(md: string) {
+    const html = await markdownToHtml(md);
+
+    this.updateElementContent(html);
+  }
+
+  updateElementContent(rawHTML: string) {
+    this._elementRef.nativeElement.innerHTML = rawHTML;
+  }
 }

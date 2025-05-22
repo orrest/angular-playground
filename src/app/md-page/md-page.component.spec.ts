@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MdRendererComponent } from './md-renderer.component';
+import { MdPageComponent } from './md-page.component';
 
-describe('MdRendererComponent', () => {
-  let component: MdRendererComponent;
-  let fixture: ComponentFixture<MdRendererComponent>;
+describe('MdPageComponent', () => {
+  let component: MdPageComponent;
+  let fixture: ComponentFixture<MdPageComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MdRendererComponent]
+      imports: [MdPageComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(MdRendererComponent);
+    fixture = TestBed.createComponent(MdPageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
