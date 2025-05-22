@@ -1,16 +1,8 @@
-<main class="flex flex-col items-center">
-  <div>
-    <button class="border" (click)="onClick($event)">click me!</button>
-  </div>
+<main class="flex flex-col items-center gap-4">
+  <nav class="flex w-full flex-row flex-wrap gap-4 border-2">
+    <a routerLink="/click-to-close">Click doc to close</a>
+    <a routerLink="/md-renderer">Markdown Renderer</a>
+  </nav>
 
-  @if (visible()) {
-    <div
-      class="animate-ping"
-      (animationstart)="onAnimationStart($event)"
-      (animationend)="onAnimationEnd()"
-      (animationcancel)="onAnimationEnd()"
-    >
-      sig is true
-    </div>
-  }
+  <router-outlet />
 </main>

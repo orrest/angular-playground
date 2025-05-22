@@ -1,0 +1,16 @@
+<article>
+  <div>
+    <button class="border" (click)="onClick($event)">click me!</button>
+  </div>
+
+  @if (visible()) {
+    <div
+      class="animate-ping"
+      (animationstart)="onAnimationStart($event)"
+      (animationend)="onAnimationEnd()"
+      (animationcancel)="onAnimationEnd()"
+    >
+      sig is true
+    </div>
+  }
+</article>
