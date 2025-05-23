@@ -28,12 +28,11 @@ jobs:
       - name: Install project dependencies
         run: npm install
 
-      # 设置 Git 信息
-      - name: Set git info
-        run: |
-          git config --global user.email "you@example.com"
-          git config --global user.name "${{ github.actor }}"
+      - name: Build Angular app
+        run: ng build --base-href "/${{ github.event.repository.name }}/" --output-path=dist
 
-      # 部署
-      - name: Deploy to gh
-        run: ng deploy --base-href=/angular-playground/
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
