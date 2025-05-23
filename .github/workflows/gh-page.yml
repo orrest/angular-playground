@@ -30,4 +30,4 @@ jobs:
 
       # 部署
       - name: Deploy to gh
-        run: ng deploy --base-ref=/angular-playground/
+        run: ng deploy --base-href=/angular-playground/
