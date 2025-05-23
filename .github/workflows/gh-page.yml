@@ -28,6 +28,12 @@ jobs:
       - name: Install project dependencies
         run: npm install
 
+      # 设置 Git 信息
+      - name: Set git info
+        run: |
+          git config user.email "you@example.com"
+          git config user.name "orrest"
+
       # 部署
       - name: Deploy to gh
-        run: ng deploy --base-href=/angular-playground/ --name="orrest" --email=example.mail@example.org
+        run: ng deploy --base-href=/angular-playground/
