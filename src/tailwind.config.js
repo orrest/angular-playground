@@ -7,8 +7,6 @@ module.exports = {
           css: {
             pre: false,
             code: false,
-            "code::before": false,
-            "code::after": false,
           },
         },
       },
