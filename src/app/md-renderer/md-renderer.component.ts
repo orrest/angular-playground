@@ -1,5 +1,6 @@
 import { Component, ElementRef, effect, inject, input } from '@angular/core';
 import { markdownToHtml } from './utils/transform-markdown';
+import highlightJs from 'highlight.js';
 
 @Component({
   selector: 'md-renderer',
@@ -26,5 +27,7 @@ export class MdRendererComponent {
 
   updateElementContent(rawHTML: string) {
     this._elementRef.nativeElement.innerHTML = rawHTML;
+
+    highlightJs.highlightAll();
   }
 }

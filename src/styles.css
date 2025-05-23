@@ -1,6 +1,10 @@
 /* You can add global styles to this file, and also import other style files */
 @import "tailwindcss";
+@import 'highlight.js/styles/github.css';
+
 @plugin "@tailwindcss/typography";
+
+@config "./tailwind.config.js";
 
 @layer base {
   a {
