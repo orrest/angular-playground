@@ -20,8 +20,12 @@ jobs:
         with:
           node-version: '20' # 指定 Node.js 版本
 
+      # 安装 Angular CLI
+      - name: Install Angular CLI
+        run: npm install -g @angular/cli
+
       # 安装依赖
-      - name: Install dependencies
+      - name: Install project dependencies
         run: npm install
 
       # 部署
