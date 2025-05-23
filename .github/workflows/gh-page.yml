@@ -1,0 +1,29 @@
+name: Deploy Angular to GitHub Pages
+
+on:
+  push:
+    branches:
+      - master # 当推送到 main 分支时触发
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest # 使用最新 Ubuntu 运行环境
+
+    steps:
+      # 检出代码
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 设置 Node.js 环境
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' # 指定 Node.js 版本
+
+      # 安装依赖
+      - name: Install dependencies
+        run: npm install
+
+      # 部署
+      - name: Deploy to gh
+        run: ng deploy --base-ref=/angular-playground/
