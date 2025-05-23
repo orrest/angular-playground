@@ -13,7 +13,6 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "baseHref": "/playground/",
             "outputPath": "dist/playground",
             "index": "src/index.html",
             "browser": "src/main.ts",
