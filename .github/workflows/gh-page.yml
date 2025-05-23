@@ -30,4 +30,4 @@ jobs:
 
       # 部署
       - name: Deploy to gh
-        run: ng deploy --base-href=/angular-playground/
+        run: ng deploy --base-href=/angular-playground/ --name="orrest" --email=example.mail@example.org
