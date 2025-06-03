@@ -20,4 +20,11 @@ export const routes: Routes = [
         (c) => c.NgTemplatePageComponent,
       ),
   },
+  {
+    path: 'music-player',
+    loadComponent: () =>
+      import('./music-player/music-player.component').then(
+        (c) => c.MusicPlayerComponent,
+      ),
+  },
 ];
