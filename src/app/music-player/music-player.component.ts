@@ -1,5 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
-import { Howl, Howler } from 'howler';
+import { Component, ElementRef, OnInit, signal, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-music-player',
@@ -7,31 +6,19 @@ import { Howl, Howler } from 'howler';
   templateUrl: './music-player.component.html',
   styleUrl: './music-player.component.css',
 })
-export class MusicPlayerComponent implements OnInit {
-  sound!: Howl;
-
+export class MusicPlayerComponent {
   clickToPlay = signal(true);
 
-  ngOnInit(): void {
-    this.sound = new Howl({
-      src: ['sound.mp3'],
-      html5: true,
-      onpause: () => {
-        console.log('music pause');
-      },
-      onend: () => {
-        console.log('music stop');
-      },
-    });
-
-    console.log(this.sound.state());
-  }
+  @ViewChild('audio') audio!: ElementRef<HTMLAudioElement>;
 
   onClick() {
     if (this.clickToPlay()) {
-      this.sound.play();
+      this.audio.nativeElement.play()
+        .then(
+          () => { console.log('start to play') },
+          (reason) => { console.log(reason) });
     } else {
-      this.sound.pause();
+      this.audio.nativeElement.pause();
     }
 
     this.clickToPlay.set(!this.clickToPlay());

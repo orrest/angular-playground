@@ -1,5 +1,7 @@
 <p>music player</p>
 
-<button class="border-2" (click)="onClick()">
-  click to {{ clickToPlay() ? "play" : "pause" }}
+<audio #audio src="sound.mp3"></audio>
+
+<button class="text-lg hover:cursor-pointer" (click)="onClick()">
+  {{ clickToPlay() ? "▶️" : "⏸️" }}
 </button>
