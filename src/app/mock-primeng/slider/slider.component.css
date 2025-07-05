@@ -1,0 +1,17 @@
+@reference '../../../styles.css';
+
+.container {
+  @apply flex flex-col min-w-10 relative bg-purple-300 justify-center;
+}
+
+.back-track {
+  @apply bg-black h-1;
+}
+
+.front-track {
+  @apply h-1 bg-purple-300;
+}
+
+.handle {
+  @apply w-[20px] h-[20px] bg-gray-400 rounded-[50%]
+}

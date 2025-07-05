@@ -27,4 +27,20 @@ export const routes: Routes = [
         (c) => c.MusicPlayerComponent,
       ),
   },
+  {
+    path: 'mock-primeng',
+    loadComponent: () =>
+      import('./mock-primeng/mock-primeng.component').then(
+        (c) => c.MockPrimengComponent,
+      ),
+    children: [
+      {
+        path: 'slider',
+        loadComponent: () =>
+          import('./mock-primeng/slider/slider.component').then(
+            (c) => c.SliderComponent,
+          ),
+      },
+    ],
+  },
 ];

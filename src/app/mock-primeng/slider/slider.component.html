@@ -1,0 +1,22 @@
+<div class="container">
+  <span
+    class="back-track"
+    [ngStyle]="{ position: 'absolute', width: handleValue + '%' }"
+  ></span>
+
+  <span class="front-track"></span>
+
+  <span
+    #sliderHandle
+    class="handle"
+    [attr.aria-valuemin]="min()"
+    [attr.aria-valuenow]="value"
+    [attr.aria-valuemax]="max()"
+    [style.transition]="dragging ? 'none' : null"
+    [ngStyle]="{
+      position: 'absolute',
+      'inset-inline-start': handleValue + '%',
+    }"
+    (mousedown)="onMouseDown($event)"
+  ></span>
+</div>
