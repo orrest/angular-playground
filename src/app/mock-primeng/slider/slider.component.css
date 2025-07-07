@@ -1,11 +1,11 @@
 @reference '../../../styles.css';
 
-.container {
-  @apply flex flex-col min-w-10 relative bg-purple-300 justify-center;
+:host {
+  @apply relative flex h-1 w-full flex-row items-center bg-black;
 }
 
-.back-track {
-  @apply bg-black h-1;
+.container {
+  @apply relative flex min-w-10 flex-col justify-center bg-purple-300;
 }
 
 .front-track {
@@ -13,5 +13,5 @@
 }
 
 .handle {
-  @apply w-[20px] h-[20px] bg-gray-400 rounded-[50%]
+  @apply h-[20px] w-[20px] rounded-[50%] bg-gray-400;
 }
