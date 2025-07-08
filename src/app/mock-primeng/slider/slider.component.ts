@@ -1,186 +1,116 @@
 import {
   booleanAttribute,
+  ChangeDetectionStrategy,
   Component,
   ElementRef,
   inject,
   input,
-  InputSignal,
   NgZone,
-  PLATFORM_ID,
-  Renderer2,
+  OnDestroy,
   ViewChild,
 } from '@angular/core';
-import { DOCUMENT, isPlatformBrowser, NgStyle } from '@angular/common';
-
-export declare type Nullable<T = void> = T | null | undefined;
-export declare type VoidListener = VoidFunction | null | undefined;
+import { isPlatformBrowser, NgStyle } from '@angular/common';
+import { BaseComponent } from '../base/base.component';
+import { Nullable, VoidListener } from '../base/utilities.model';
 
 @Component({
   selector: 'app-slider',
   imports: [NgStyle],
   templateUrl: './slider.component.html',
   styleUrl: './slider.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SliderComponent {
-  public document: Document = inject(DOCUMENT);
-  public renderer: Renderer2 = inject(Renderer2);
-  public el: ElementRef = inject(ElementRef);
-  public platformId: any = inject(PLATFORM_ID);
+export class SliderComponent extends BaseComponent implements OnDestroy {
   private ngZone = inject(NgZone);
 
   disabled = input(undefined, { transform: booleanAttribute });
   name = input<string | undefined>();
   min = input(0);
-  max = input(100);
-  step = input<number | undefined>(undefined);
+  max = input(300);
 
   public value: Nullable<number>;
   public dragging: Nullable<boolean>;
-  public handleValue: Nullable<number> = 50;
+  public handlePercentageValue: Nullable<number> = 50;
+
   public dragListener: VoidListener;
   public mouseupListener: VoidListener;
-  public startHandleValue: any;
 
-  public initX: Nullable<number>;
-  public initY: Nullable<number>;
-  public barWidth: Nullable<number>;
-  public barHeight: Nullable<number>;
-  public startx: Nullable<number>;
-  public starty: Nullable<number>;
-
-  diff: Nullable<number>;
-  offset: Nullable<number>;
+  public left: Nullable<number>;
+  public top: Nullable<number>;
+  public width: Nullable<number>;
+  public height: Nullable<number>;
 
   @ViewChild('sliderHandle') sliderHandle: Nullable<ElementRef>;
 
-  onMouseDown(event: Event) {
+  /**
+   * Handles the `mousedown` event on an element to initiate a drag action.
+   *
+   * @param {Event} event - The mousedown event object triggered by the user interaction.
+   * @return {void} This method does not return a value.
+   */
+  onMouseDown(event: Event): void {
     if (this.disabled()) {
       return;
     }
 
     this.dragging = true;
-    this.updateDomData();
-    // this.sliderHandleClick = true;
+    this.updateElementPosition();
 
     this.bindDragListeners();
+
     (event.target as HTMLInputElement).focus();
     event.preventDefault();
-
-    // if (this.animate) {
-    //   removeClass(this.el.nativeElement, 'p-slider-animate');
-    // }
   }
 
-  updateDomData(): void {
+  updateElementPosition(): void {
     let rect = this.el.nativeElement.getBoundingClientRect();
-    this.initX = rect.left + this.getWindowScrollLeft();
-    this.initY = rect.top + this.getWindowScrollTop();
-    this.barWidth = this.el.nativeElement.offsetWidth;
-    this.barHeight = this.el.nativeElement.offsetHeight;
+    this.left = rect.left + this.getWindowScrollLeft();
+    this.top = rect.top + this.getWindowScrollTop();
+    this.width = this.el.nativeElement.offsetWidth;
+    this.height = this.el.nativeElement.offsetHeight;
   }
 
-  public getWindowScrollTop(): number {
-    let doc = document.documentElement;
-    return (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0);
-  }
+  updateValue(xPositionPercentage: number) {
+    const handlePositionInPercentage =
+      this.calcHandlePositionInPercentage(xPositionPercentage);
 
-  public getWindowScrollLeft(): number {
-    let doc = document.documentElement;
-    return (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0);
-  }
+    this.handlePercentageValue = handlePositionInPercentage * 100;
 
-  handleChange(event: Event) {
-    let handleValue = this.calculateHandleValue(event);
-    this.setValueFromHandle(event, handleValue);
-  }
-
-  getValueFromHandle(handleValue: number): number {
-    return (this.max() - this.min()) * (handleValue / 100) + this.min();
-  }
-
-  setValueFromHandle(event: Event, handleValue: any) {
-    let newValue = this.getValueFromHandle(handleValue);
-
-    console.log('setValueFromHandle: ' + handleValue);
-
-    if (this.step()) {
-      this.handleStepChange(newValue, this.value as any);
-    } else {
-      this.handleValue = handleValue;
-      this.updateValue(newValue, event);
-    }
-
-    // this.cd.markForCheck();
-  }
-
-  updateValue(val: number, event?: Event): void {
-    if (val < this.min()) {
-      val = this.min();
-      this.handleValue = 0;
-    } else if (val > this.max()) {
-      val = this.max();
-      this.handleValue = 100;
-    }
-
-    this.value = this.getNormalizedValue(val);
+    this.value = handlePositionInPercentage * (this.max() - this.min());
 
     // this.onModelChange(this.value);
     // this.onChange.emit({ event: event as Event, value: this.value });
     this.sliderHandle?.nativeElement.focus();
 
-    this.updateHandleValue();
+    this.cd.markForCheck();
   }
 
-  updateHandleValue(): void {
-    if ((this.value as number) < this.min()) this.handleValue = 0;
-    else if ((this.value as number) > this.max()) this.handleValue = 100;
-    else
-      this.handleValue =
-        (((this.value as number) - this.min()) * 100) /
-        (this.max() - this.min());
-
-    if (this.step()) {
-    }
-  }
-
-  getNormalizedValue(val: number): number {
-    let decimalsCount = this.getDecimalsCount(this.step() as number);
-    if (decimalsCount > 0) {
-      return +parseFloat(val.toString()).toFixed(decimalsCount);
+  /**
+   * Calculates and returns the handle position in percentage based on the input value.
+   * Ensures the value stays within the range of 0 to 1.
+   *
+   * @param {number} xPositionPercentage - The input percentage value representing the x position.
+   *                                       Expected to be between 0 and 1.
+   * @return {number} The adjusted handle position percentage, constrained between 0 and 1.
+   */
+  calcHandlePositionInPercentage(xPositionPercentage: number): number {
+    if (xPositionPercentage < 0) {
+      return 0;
+    } else if (xPositionPercentage > 1) {
+      return 1;
     } else {
-      return Math.floor(val);
+      return xPositionPercentage;
     }
   }
 
-  getDecimalsCount(value: number): number {
-    if (value && Math.floor(value) !== value)
-      return value.toString().split('.')[1].length || 0;
-    return 0;
-  }
-
-  handleStepChange(newValue: number, oldValue: number) {
-    let diff = newValue - oldValue;
-    let val = oldValue;
-    let _step = this.step() as number;
-
-    if (diff < 0) {
-      val = oldValue + Math.ceil(newValue / _step - oldValue / _step) * _step;
-    } else if (diff > 0) {
-      val = oldValue + Math.floor(newValue / _step - oldValue / _step) * _step;
-    }
-
-    this.updateValue(val);
-    this.updateHandleValue();
-  }
-
-  calculateHandleValue(event: Event): number {
-    return (
-      (((this.initX as number) +
-        (this.barWidth as number) -
-        (event as MouseEvent).pageX) *
-        100) /
-      (this.barWidth as number)
-    );
+  /**
+   * Calculates the x-position as a percentage of the track's width.
+   *
+   * @param pageX - The x-coordinate position relative to the page.
+   * @return The calculated x-position as a percentage of the track's width in (could be out of scope).
+   */
+  calcXPositionInPercentageOfTrack(pageX: number): number {
+    return (pageX - (this.left as number)) / (this.width as number);
   }
 
   bindDragListeners() {
@@ -197,7 +127,11 @@ export class SliderComponent {
             (event) => {
               if (this.dragging) {
                 this.ngZone.run(() => {
-                  this.handleChange(event);
+                  const xPositionPercentage =
+                    this.calcXPositionInPercentageOfTrack(
+                      (event as MouseEvent).pageX,
+                    );
+                  this.updateValue(xPositionPercentage);
                 });
               }
             },
@@ -208,7 +142,7 @@ export class SliderComponent {
           this.mouseupListener = this.renderer.listen(
             documentTarget,
             'mouseup',
-            (event) => {
+            () => {
               if (this.dragging) {
                 this.dragging = false;
                 this.ngZone.run(() => {
@@ -225,62 +159,20 @@ export class SliderComponent {
     }
   }
 
-  onDragStart(event: TouchEvent) {
-    if (this.disabled()) {
-      return;
+  unbindDragListeners() {
+    if (this.dragListener) {
+      this.dragListener();
+      this.dragListener = null;
     }
 
-    var touchobj = event.changedTouches[0];
-    this.dragging = true;
-
-    this.starty = parseInt((touchobj as any).clientY, 10);
-    this.barHeight = this.el.nativeElement.offsetHeight;
-
-    // if (this.animate) {
-    //   removeClass(this.el.nativeElement, 'p-slider-animate');
-    // }
-
-    event.preventDefault();
+    if (this.mouseupListener) {
+      this.mouseupListener();
+      this.mouseupListener = null;
+    }
   }
 
-  onDrag(event: TouchEvent) {
-    if (this.disabled()) {
-      return;
-    }
-
-    var touchobj = event.changedTouches[0],
-      handleValue = 0;
-
-    handleValue =
-      Math.floor(
-        ((parseInt((touchobj as any).clientX, 10) - (this.startx as number)) *
-          100) /
-          (this.barWidth as number),
-      ) + this.startHandleValue;
-
-    console.log('onDrag' + handleValue);
-
-    this.setValueFromHandle(event, handleValue);
-
-    event.preventDefault();
-  }
-
-  onDragEnd(event: TouchEvent) {
-    if (this.disabled()) {
-      return;
-    }
-
-    this.dragging = false;
-
-    // this.onSlideEnd.emit({
-    //   originalEvent: event,
-    //   value: this.value as number,
-    // });
-
-    // if (this.animate) {
-    //   addClass(this.el.nativeElement, 'p-slider-animate');
-    // }
-
-    event.preventDefault();
+  override ngOnDestroy(): void {
+    this.unbindDragListeners();
+    super.ngOnDestroy();
   }
 }

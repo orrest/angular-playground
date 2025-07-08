@@ -1,17 +1,13 @@
 @reference '../../../styles.css';
 
 :host {
-  @apply relative flex h-1 w-full flex-row items-center bg-black;
-}
-
-.container {
-  @apply relative flex min-w-10 flex-col justify-center bg-purple-300;
+  @apply relative flex h-1 w-full flex-row items-center bg-[#18171f];
 }
 
 .front-track {
-  @apply h-1 bg-purple-300;
+  @apply h-1 bg-[#A4FFAF];
 }
 
 .handle {
-  @apply h-[20px] w-[20px] rounded-[50%] bg-gray-400;
+  @apply h-[24px] w-[24px] rounded-[50%] bg-[#E6E5EA] active:outline-[#A4FFAF] active:outline-2 active:bg-black;
 }

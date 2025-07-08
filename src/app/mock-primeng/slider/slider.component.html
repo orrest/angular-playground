@@ -1,7 +1,7 @@
 <span
   class="front-track"
   [attr.data-pc-section]="'range'"
-  [ngStyle]="{ position: 'absolute', width: handleValue + '%' }"
+  [ngStyle]="{ position: 'absolute', width: handlePercentageValue + '%' }"
 ></span>
 
 <span
@@ -10,15 +10,8 @@
   [style.transition]="dragging ? 'none' : null"
   [ngStyle]="{
     position: 'absolute',
-    'inset-inline-start': handleValue + '%',
+    'inset-inline-start': handlePercentageValue + '%',
+    transform: 'translateX(-50%)',
   }"
-  (touchstart)="onDragStart($event)"
-  (touchmove)="onDrag($event)"
-  (touchend)="onDragEnd($event)"
   (mousedown)="onMouseDown($event)"
-  role="slider"
-  [attr.aria-valuemin]="min()"
-  [attr.aria-valuenow]="value"
-  [attr.aria-valuemax]="max()"
-  [attr.data-pc-section]="'handle'"
 ></span>
