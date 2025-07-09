@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
+  forwardRef,
   inject,
   input,
   NgZone,
@@ -12,15 +13,26 @@ import {
 import { isPlatformBrowser, NgStyle } from '@angular/common';
 import { BaseComponent } from '../base/base.component';
 import { Nullable, VoidListener } from '../base/utilities.model';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 @Component({
   selector: 'app-slider',
   imports: [NgStyle],
   templateUrl: './slider.component.html',
   styleUrl: './slider.component.css',
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => SliderComponent),
+      multi: true,
+    },
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SliderComponent extends BaseComponent implements OnDestroy {
+export class SliderComponent
+  extends BaseComponent
+  implements OnDestroy, ControlValueAccessor
+{
   private ngZone = inject(NgZone);
 
   disabled = input(undefined, { transform: booleanAttribute });
@@ -41,6 +53,9 @@ export class SliderComponent extends BaseComponent implements OnDestroy {
   public height: Nullable<number>;
 
   @ViewChild('sliderHandle') sliderHandle: Nullable<ElementRef>;
+
+  public onModelChange: Function = () => {};
+  public onModelTouched: Function = () => {};
 
   /**
    * Handles the `mousedown` event on an element to initiate a drag action.
@@ -76,9 +91,10 @@ export class SliderComponent extends BaseComponent implements OnDestroy {
 
     this.handlePercentageValue = handlePositionInPercentage * 100;
 
-    this.value = handlePositionInPercentage * (this.max() - this.min());
+    this.value =
+      handlePositionInPercentage * (this.max() - this.min()) + this.min();
 
-    // this.onModelChange(this.value);
+    this.onModelChange(this.value);
     // this.onChange.emit({ event: event as Event, value: this.value });
     this.sliderHandle?.nativeElement.focus();
 
@@ -174,5 +190,32 @@ export class SliderComponent extends BaseComponent implements OnDestroy {
   override ngOnDestroy(): void {
     this.unbindDragListeners();
     super.ngOnDestroy();
+  }
+
+  updateHandleValueFromProgram() {
+    if ((this.value as number) < this.min()) {
+      this.handlePercentageValue = 0;
+    } else if ((this.value as number) > this.max()) {
+      this.handlePercentageValue = 100;
+    } else {
+      this.handlePercentageValue =
+        (((this.value as number) - this.min()) * 100) /
+        (this.max() - this.min());
+    }
+  }
+
+  writeValue(value: any): void {
+    this.value = value || 0;
+
+    this.updateHandleValueFromProgram();
+    this.cd.markForCheck();
+  }
+
+  registerOnChange(fn: any): void {
+    this.onModelChange = fn;
+  }
+
+  registerOnTouched(fn: any): void {
+    this.onModelTouched = fn;
   }
 }

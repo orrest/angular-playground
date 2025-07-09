@@ -35,11 +35,11 @@ export const routes: Routes = [
       ),
     children: [
       {
-        path: 'slider',
+        path: 'slider-example',
         loadComponent: () =>
-          import('./mock-primeng/slider/slider.component').then(
-            (c) => c.SliderComponent,
-          ),
+          import(
+            './mock-primeng/examples/slider-example/slider-example.component'
+          ).then((c) => c.SliderExampleComponent),
       },
     ],
   },

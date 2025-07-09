@@ -1,0 +1,22 @@
+<div class="flex w-48 flex-col gap-4">
+  <p>{{ form.get("slider")?.value }}</p>
+
+  <form [formGroup]="form" class="flex flex-col gap-4" (ngSubmit)="onSubmit()">
+    <app-slider [min]="5" [max]="95" formControlName="slider" />
+    @if (form.get("slider")?.invalid) {
+      <p class="text-red-400">Invalid slider value.</p>
+    }
+    <button
+      [disabled]="!form.valid"
+      type="submit"
+      class="rounded-sm border-2 bg-green-400 hover:cursor-pointer hover:bg-green-300 disabled:bg-gray-200 disabled:text-gray-400"
+    >
+      <p>submit</p>
+      <p>(reset to a invalid value)</p>
+    </button>
+  </form>
+
+  @if (submitted()) {
+    <p class="text-green-500">submitted!</p>
+  }
+</div>
