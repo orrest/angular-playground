@@ -8,6 +8,6 @@
 
 @layer base {
   a {
-    @apply bg-amber-100 underline
+    @apply underline hover:text-blue-600 text-green-600;
   }
 }

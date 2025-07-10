@@ -1,0 +1,13 @@
+@reference '../../../../styles.css';
+
+app-slider {
+  @apply bg-red-200 h-2 rounded-2xl;
+}
+
+:host ::ng-deep .app-slider-front-track {
+  @apply bg-amber-500 h-2 rounded-2xl;
+}
+
+:host ::ng-deep .app-slider-handle {
+  @apply bg-teal-200;
+}

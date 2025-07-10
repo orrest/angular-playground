@@ -9,6 +9,7 @@ import {
   NgZone,
   OnDestroy,
   ViewChild,
+  ViewEncapsulation,
 } from '@angular/core';
 import { isPlatformBrowser, NgStyle } from '@angular/common';
 import { BaseComponent } from '../base/base.component';
@@ -28,12 +29,18 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
     },
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    '[class]': 'class()',
+  },
+  encapsulation: ViewEncapsulation.None,
 })
 export class SliderComponent
   extends BaseComponent
   implements OnDestroy, ControlValueAccessor
 {
   private ngZone = inject(NgZone);
+
+  class = input('');
 
   disabled = input(undefined, { transform: booleanAttribute });
   name = input<string | undefined>();

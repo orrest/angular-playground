@@ -1,13 +1,26 @@
-@reference '../../../styles.css';
-
-:host {
-  @apply relative flex h-1 w-full flex-row items-center bg-[#18171f];
+app-slider {
+  display: flex;
+  flex-direction: row;
+  inline-size: 100%;
+  align-items: center;
+  position: relative;
+  block-size: 2px;
+  background-color: black;
 }
 
-.front-track {
-  @apply h-1 bg-[#A4FFAF];
+.app-slider-front-track {
+  block-size: 2px;
+  background-color: #A4FFAF;
 }
 
-.handle {
-  @apply h-[24px] w-[24px] rounded-[50%] bg-[#E6E5EA] active:outline-[#A4FFAF] active:outline-2 active:bg-black;
+.app-slider-handle {
+  block-size: 24px;
+  inline-size: 24px;
+  border-radius: 50%;
+  background: #E6E5EA;
+}
+
+.app-slider-handle:active {
+  outline: #A4FFAF solid 2px;
+  background: black;
 }
